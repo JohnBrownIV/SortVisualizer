@@ -30,7 +30,7 @@ int barHeight;
     mixUp();
     System.out.println("Starting Array: " + Arrays.toString(arr));
 
-    timer = new Timer(2, this);
+    timer = new Timer(1, this);
 	  timer.start();
     countdown = 200;
 
@@ -67,7 +67,7 @@ int barHeight;
       }
      g2D.fillRect(50 + x * barWidth, 20 + arr[x] * barHeight, barWidth, 1000);
     }
-    
+
   }
   //NEW FRAME
   @Override
@@ -81,6 +81,8 @@ int barHeight;
       } else {
         if (sortType == 1) {//Bubble
           bubSort();
+        } else if (sortType == 4) {//bogo
+          shuffle();
         }
         System.out.println(Arrays.toString(arr));
         repaint();

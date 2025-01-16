@@ -10,7 +10,7 @@ public class Main{
   Scanner in = new Scanner(System.in);
   System.out.println("How many items to sort?");
   int arrLength = Integer.parseInt(in.nextLine());
-  System.out.println("1: Bubble, 2: Selection, 3: Insertion");
+  System.out.println("1: Bubble, 2: Selection, 3: Insertion 4: Bogo");
   int sort = Integer.parseInt(in.nextLine());
   MyFrame frame = new MyFrame(arrLength, sort);//Integer.parseInt(in.next())
   //System.out.println("OPEN THE GAME HURRY");
