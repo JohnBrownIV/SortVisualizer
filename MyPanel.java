@@ -12,23 +12,27 @@ int[] arr;
 int sortType;
 boolean sorting;
 int selected;
+boolean step;
+
+int index;
+int secondIndex;
  
   MyPanel(int arrLength, int sort) {
     arr = new int[arrLength];
     for (int i = 0; i < arrLength; i++) {
       arr[i] = i;
     }
-
-    System.out.println(Arrays.toString(arr));
-    System.out.println(checkSort());
     mixUp();
-    System.out.println(Arrays.toString(arr));
-    System.out.println(checkSort());
+    System.out.println("Starting Array: " + Arrays.toString(arr));
 
     timer = new Timer(5, this);
 	  timer.start();
 
+    sortType = sort;
     sorting = false;
+
+    index = 0;
+    secondIndex = 0;
 
     this.setPreferredSize(new Dimension(1920,1080));
     this.setBackground(Color.white);
@@ -41,29 +45,23 @@ int selected;
   //NEW FRAME
   @Override
 	public void actionPerformed(ActionEvent e) {
-    checkSort();
-    if (!sorting) {
-      if (sortType == 1) {
-        try {
-          bubSort();
-        } catch (Exception b) {
-          System.out.println("err");
-        }
-       }
+    if (checkSort()) {
+      System.out.println("Good job! Ya did it!");
     } else {
-      //Idk
+      if (sortType == 1) {//Bubble
+        bubSort();
+      }
+      System.out.println(Arrays.toString(arr));
     }
   }
-  private void bubSort() throws InterruptedException {
-    sorting = true;
-    for (int i = 0; i < arr.length; i++) {
-      for (int y = 0; y < arr.length - 1; y++) {
-        if (arr[y] > arr[y + 1]) {
-          swap(y, y + 1);
-        }
-        Thread.sleep(100);
-      }
+  private void bubSort() {
+    if (index > arr.length - 1) {
+      index = 0;
     }
+    if (arr[index] > arr[index + 1]) {
+      swap(index, index + 1);
+    }
+    ++index;
   }
   private boolean checkSort() {
     boolean sorted = true;
