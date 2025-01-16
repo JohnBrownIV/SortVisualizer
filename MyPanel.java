@@ -18,6 +18,8 @@ int countdown;
 
 int index;
 int secondIndex;
+int min;
+boolean sPhase2;
 
 int barWidth;
 int barHeight;
@@ -40,6 +42,7 @@ int barHeight;
 
     index = 0;
     secondIndex = 0;
+    sPhase2 = false;
 
     this.setPreferredSize(new Dimension(1920,1080));
     this.setBackground(Color.white);
@@ -81,7 +84,9 @@ int barHeight;
       } else {
         if (sortType == 1) {//Bubble
           bubSort();
-        } else if (sortType == 4) {//bogo
+        } else if (sortType == 2) {
+          selectSort();
+        }else if (sortType == 4) {//bogo
           shuffle();
         }
         System.out.println(Arrays.toString(arr));
@@ -89,6 +94,20 @@ int barHeight;
       }
     } else {
       countdown--;
+    }
+  }
+  private void selectSort() {
+    if (index > arr.length) {
+      index = 0;
+    }
+    if (secondIndex > arr.length) {
+      secondIndex = index;
+      sPhase2 = true;
+    }
+    if (!sPhase2) {
+      if (arr[secondIndex] < min) {
+        min = arr[secondIndex];
+      }
     }
   }
   private void bubSort() {
