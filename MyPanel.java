@@ -5,40 +5,62 @@ import java.util.Random;
 
 import javax.swing.*;
 
-public class MyPanel extends JPanel {
+public class MyPanel extends JPanel implements ActionListener {
 
 Timer timer;
 int[] arr;
 int sortType;
+boolean sorting;
+int selected;
  
   MyPanel(int arrLength, int sort) {
     arr = new int[arrLength];
     for (int i = 0; i < arrLength; i++) {
       arr[i] = i;
     }
+
     System.out.println(Arrays.toString(arr));
     System.out.println(checkSort());
     mixUp();
     System.out.println(Arrays.toString(arr));
     System.out.println(checkSort());
+
+    timer = new Timer(5, this);
+	  timer.start();
+
+    sorting = false;
+
     this.setPreferredSize(new Dimension(1920,1080));
     this.setBackground(Color.white);
-    if (sortType == 1) {
-      bubSort();
-     }
   }
 
   public void paint(Graphics g) {
     Graphics2D g2D = (Graphics2D) g;
-    System.out.println(Arrays.toString(arr));
+    
+  }
+  //NEW FRAME
+  @Override
+	public void actionPerformed(ActionEvent e) {
+    checkSort();
+    if (!sorting) {
+      if (sortType == 1) {
+        try {
+          bubSort();
+        } catch (Exception b) {
+          System.out.println("err");
+        }
+       }
+    } else {
+      //Idk
+    }
   }
   private void bubSort() throws InterruptedException {
+    sorting = true;
     for (int i = 0; i < arr.length; i++) {
       for (int y = 0; y < arr.length - 1; y++) {
-        if (arr[y] < arr[y] + 1) {
+        if (arr[y] > arr[y + 1]) {
           swap(y, y + 1);
         }
-        repaint();
         Thread.sleep(100);
       }
     }
