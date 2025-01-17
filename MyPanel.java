@@ -24,6 +24,7 @@ boolean phase2;
 //Quick only
 int pivot;
 int thirdIndex;
+int highIndex;
 int quickPhase;
 
 double barWidth;
@@ -53,6 +54,7 @@ double barHeight;
     pivot = arr.length - 1;
     quickPhase = 0;
     thirdIndex = 0;
+    highIndex = arr.length - 1;
 
     this.setPreferredSize(new Dimension(1920,1080));
     this.setBackground(Color.white);
@@ -83,9 +85,11 @@ double barHeight;
         } else if (x == index) {
           g2D.setColor(Color.green);
         } else if (x == secondIndex) {
-          g2D.setColor(Color.orange);
+          g2D.setColor(Color.blue);
         } else if (x == thirdIndex) {
           g2D.setColor(Color.yellow);
+        } else if (x == highIndex) {
+          g2D.setColor(Color.magenta);
         } else {
           g2D.setColor(Color.black);
         }
@@ -130,23 +134,53 @@ double barHeight;
   }
   private void quickSort() {
     if (quickPhase == 0) {//Assign pivot
-      pivot = ((pivot - index) / 2) + index;
-      if (pivot != index) {//If the pivot hasn't hit the side
-        secondIndex = index;
-        thirdIndex = arr.length - 1;
-        quickPhase = 1;
+      if (pivot - index > 1) {//If the pivot hasn't hit the index
+        highIndex = pivot;
+        pivot = ((highIndex - index) / 2) + index;
       } else {
-        ++index;
+        index = highIndex;
+        highIndex = arr.length - 1;
+        pivot = ((arr.length - index) / 2) + index;
       }
-    } else if (quickPhase == 1) {//left half of partition
-      if (secondIndex >= pivot) {//Move left index inward
+      if (pivot == 0) {
+        index = highIndex;
+        highIndex = arr.length - 1;
+        pivot = ((arr.length - index) / 2) + index;
+      }
+      secondIndex = index;
+      thirdIndex = highIndex;
+      quickPhase = 1;
+    } else if (quickPhase == 1) {//Moving indexes
+      if (arr[secondIndex] <= arr[pivot]) {//Move left index inward
         secondIndex++;
+        if (secondIndex >= pivot) {
+          secondIndex = pivot - 1;
+          System.out.println("Caught second, set to " + secondIndex + "  Left Index: " + index + ", Right Index: " + highIndex + ", Pivot: " + pivot);
+        }
       }
-      if (thirdIndex <= pivot) {//Move right index inward
-        secondIndex--;
+      if (arr[thirdIndex] >= arr[pivot]) {//Move right index inward
+        thirdIndex--;
+        if (thirdIndex <= pivot) {
+          thirdIndex = pivot + 1;
+          System.out.println("Caught third, set to " + thirdIndex + "  Left Index: " + index + ", Right Index: " + highIndex + ", Pivot: " + pivot);
+        }
       }
-      if (secondIndex > pivot || thirdIndex < pivot) {//At least one side requires a swap
-
+      if (arr[secondIndex] > arr[pivot] || arr[thirdIndex] < arr[pivot]) {//At least one side requires a swap
+        if (arr[secondIndex] > arr[pivot] && arr[thirdIndex] < arr[pivot]) {//THe both do! Yay!
+          swap(secondIndex, thirdIndex);
+        } else if (secondIndex == pivot - 1 || thirdIndex == pivot + 1) {//One side is out of options
+          if (arr[secondIndex] > arr[pivot]) {//Left side is the one needing the swap
+            swap(secondIndex, pivot);//Move the pivot over
+            --pivot;
+          } else {//Right side needs the swap
+            swap(thirdIndex, pivot);//Move the pivot over
+            ++pivot;
+          }
+        }
+      } else {//Neither side needs to swap
+        if (secondIndex == pivot - 1 && thirdIndex == pivot + 1) {
+          quickPhase = 0;
+        }
       }
     }
   }
