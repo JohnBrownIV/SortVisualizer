@@ -19,7 +19,7 @@ int countdown;
 int index;
 int secondIndex;
 int min;
-boolean sPhase2;
+boolean phase2;
 
 int barWidth;
 int barHeight;
@@ -42,7 +42,7 @@ int barHeight;
 
     index = 0;
     secondIndex = 0;
-    sPhase2 = false;
+    phase2 = false;
     min = arr.length - 1;
 
     this.setPreferredSize(new Dimension(1920,1080));
@@ -66,9 +66,9 @@ int barHeight;
     for (int x = 0; x < arr.length; x++) {
       if (x == index) {
         g2D.setColor(Color.orange);
-      } else if (sortType == 2 && x == secondIndex) {
+      } else if ((sortType == 2 || sortType == 3) && x == secondIndex) {
         g2D.setColor(Color.green);
-      } else if (sortType == 2 && x == min) {
+      } else if (sortType == 2  && x == min) {
         g2D.setColor(Color.red);
       } else {
         g2D.setColor(Color.black);
@@ -95,34 +95,60 @@ int barHeight;
           bubSort();
         } else if (sortType == 2) {
           selectSort();
-        }else if (sortType == 4) {//bogo
+        } else if (sortType == 3) {
+          insertSort();
+        } else if (sortType == 4) {//bogo
           shuffle();
         }
-        System.out.println(Arrays.toString(arr));
+        //System.out.println(Arrays.toString(arr));
         repaint();
       }
     } else {
       countdown--;
     }
   }
+  private void insertSort() {
+    if (index == 0) {
+      index = 1;
+    }
+    if (!phase2) {
+      if (arr[secondIndex] < arr[index]) {
+        secondIndex++;
+      } else {
+        insertShift();
+        phase2 = true;
+      }
+    } else {
+      index++;
+      secondIndex = 0;
+      phase2 = false;
+    }
+  }
+  private void insertShift() {
+    int temp = arr[index];
+    for (int i = index; i > secondIndex; --i) {
+      arr[i] = arr[i - 1];
+    }
+    arr[secondIndex] = temp;
+  }
   private void selectSort() {
     if (index >= arr.length - 1) {
       index = 0;
     }
     if (secondIndex >= arr.length - 1) {
-      sPhase2 = true;
+      phase2 = true;
     }
-    if (!sPhase2) {
+    if (!phase2) {
       if (arr[secondIndex] < arr[min]) {
         min = secondIndex;
       }
       secondIndex++;
-    } else if (sPhase2) {
+    } else if (phase2) {
       swap(index, min);
       min = arr.length - 1;
       index++;
       secondIndex = index;
-      sPhase2 = false;
+      phase2 = false;
     }
   }
   private void bubSort() {
