@@ -50,7 +50,7 @@ double barHeight;
     phase2 = false;
     min = arr.length - 1;
 
-    pivot = arr.length / 2;
+    pivot = arr.length - 1;
     quickPhase = 0;
     thirdIndex = 0;
 
@@ -71,12 +71,24 @@ double barHeight;
     g2D.fillRect(50, 980, 1800, 5);
 
     for (int x = 0; x < arr.length; x++) {
-      if (x == index) {
+      if (x == index && sortType != 4) {
         g2D.setColor(Color.orange);
       } else if ((sortType == 2 || sortType == 3) && x == secondIndex) {
         g2D.setColor(Color.green);
       } else if (sortType == 2  && x == min) {
         g2D.setColor(Color.red);
+      } else if (sortType == 4) {//Quicksort
+        if (x == pivot) {
+          g2D.setColor(Color.red);
+        } else if (x == index) {
+          g2D.setColor(Color.green);
+        } else if (x == secondIndex) {
+          g2D.setColor(Color.orange);
+        } else if (x == thirdIndex) {
+          g2D.setColor(Color.yellow);
+        } else {
+          g2D.setColor(Color.black);
+        }
       } else {
         g2D.setColor(Color.black);
       }
@@ -118,20 +130,39 @@ double barHeight;
   }
   private void quickSort() {
     if (quickPhase == 0) {//Assign pivot
-      pivot = ((arr.length - index) / 2) + index;//middle of unsorted
-      secondIndex = index;
-      thirdIndex = arr.length - 1;
-      quickPhase = 1;
-    } else if (quickPhase == 1) {//left half of partition
-      if (secondIndex > pivot) {//If we've hit the pivot
-        quickPhase = 0;//Sorted, assign new pivot
+      pivot = ((pivot - index) / 2) + index;
+      if (pivot != index) {//If the pivot hasn't hit the side
+        secondIndex = index;
+        thirdIndex = arr.length - 1;
+        quickPhase = 1;
       } else {
-        if (arr[secondIndex] > arr[pivot]) {//We need to make a swap
-          quickPhase = 3;
+        ++index;
+      }
+    } else if (quickPhase == 1) {//left half of partition
+      if (arr[secondIndex] > arr[pivot]) {//We need to make a swap
+        if (thirdIndex > pivot) {//The right half has a smaller element
+          quickPhase = 2;
+        } else {
+          swap(pivot, pivot - 1);
+          --pivot;
+        }
+      } else {
+        secondIndex++;
+        if (secondIndex > pivot) {
+          quickPhase = 0;
         }
       }
-    } else if (quickPhase == 3) {//Find a right-side swap candidate
-
+    } else if (quickPhase == 2) {//Find a right-side swap candidate
+      if (arr[thirdIndex] < arr[pivot]) {//This index needs to be swapped
+        swap(thirdIndex, secondIndex);
+        quickPhase = 1;
+      } else {
+        --thirdIndex;
+        if (thirdIndex == pivot) {
+          System.out.println("HIT PIVOT, R");
+          quickPhase = 2;
+        }
+      }
     }
   }
   private void insertSort() {
