@@ -38,9 +38,9 @@ double barHeight;
     mixUp();
     System.out.println("Starting Array: " + Arrays.toString(arr));
 
-    timer = new Timer(1, this);
+    timer = new Timer(100, this);
 	  timer.start();
-    countdown = 200;
+    countdown = 50;
 
     sortType = sort;
     sorting = false;
@@ -98,7 +98,10 @@ double barHeight;
       }
      g2D.fillRect(50 + (int)(x * barWidth), 980 - (int)(arr[x] * barHeight), (int)barWidth, 1000);
     }
-
+    if (sortType == 4) {
+      g2D.setColor(Color.gray);
+      g2D.fillRect(0, 980 - (int)(arr[pivot] * barHeight), 1920, 5);
+    }
   }
   //NEW FRAME
   @Override
@@ -133,16 +136,15 @@ double barHeight;
     }
   }
   private void quickSort() {
+    if (pivot == 0) {
+      pivot = 1;
+      System.out.println("Pinged Edge");
+    }
     if (quickPhase == 0) {//Assign pivot
       if (pivot - index > 1) {//If the pivot hasn't hit the index
         highIndex = pivot;
         pivot = ((highIndex - index) / 2) + index;
       } else {
-        index = highIndex;
-        highIndex = arr.length - 1;
-        pivot = ((arr.length - index) / 2) + index;
-      }
-      if (pivot == 0) {
         index = highIndex;
         highIndex = arr.length - 1;
         pivot = ((arr.length - index) / 2) + index;
@@ -170,11 +172,15 @@ double barHeight;
           swap(secondIndex, thirdIndex);
         } else if (secondIndex == pivot - 1 || thirdIndex == pivot + 1) {//One side is out of options
           if (arr[secondIndex] > arr[pivot]) {//Left side is the one needing the swap
+            System.out.print("Pivot: " + pivot + ", Pivot Value: " + arr[pivot]);
             swap(secondIndex, pivot);//Move the pivot over
             --pivot;
+            System.out.println(" | New Pivot: " + pivot + ", New Pivot Value: " + arr[pivot]);
           } else {//Right side needs the swap
+            System.out.print("Pivot: " + pivot + ", Pivot Value: " + arr[pivot]);
             swap(thirdIndex, pivot);//Move the pivot over
             ++pivot;
+            System.out.println(" | New Pivot: " + pivot + ", New Pivot Value: " + arr[pivot]);
           }
         }
       } else {//Neither side needs to swap
