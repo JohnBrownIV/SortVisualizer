@@ -139,29 +139,14 @@ double barHeight;
         ++index;
       }
     } else if (quickPhase == 1) {//left half of partition
-      if (arr[secondIndex] > arr[pivot]) {//We need to make a swap
-        if (thirdIndex > pivot) {//The right half has a smaller element
-          quickPhase = 2;
-        } else {
-          swap(pivot, pivot - 1);
-          --pivot;
-        }
-      } else {
+      if (secondIndex >= pivot) {//Move left index inward
         secondIndex++;
-        if (secondIndex > pivot) {
-          quickPhase = 0;
-        }
       }
-    } else if (quickPhase == 2) {//Find a right-side swap candidate
-      if (arr[thirdIndex] < arr[pivot]) {//This index needs to be swapped
-        swap(thirdIndex, secondIndex);
-        quickPhase = 1;
-      } else {
-        --thirdIndex;
-        if (thirdIndex == pivot) {
-          System.out.println("HIT PIVOT, R");
-          quickPhase = 2;
-        }
+      if (thirdIndex <= pivot) {//Move right index inward
+        secondIndex--;
+      }
+      if (secondIndex > pivot || thirdIndex < pivot) {//At least one side requires a swap
+
       }
     }
   }
