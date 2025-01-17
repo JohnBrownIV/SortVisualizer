@@ -43,6 +43,7 @@ int barHeight;
     index = 0;
     secondIndex = 0;
     sPhase2 = false;
+    min = arr.length - 1;
 
     this.setPreferredSize(new Dimension(1920,1080));
     this.setBackground(Color.white);
@@ -65,6 +66,10 @@ int barHeight;
     for (int x = 0; x < arr.length; x++) {
       if (x == index) {
         g2D.setColor(Color.orange);
+      } else if (sortType == 2 && x == secondIndex) {
+        g2D.setColor(Color.green);
+      } else if (sortType == 2 && x == min) {
+        g2D.setColor(Color.red);
       } else {
         g2D.setColor(Color.black);
       }
@@ -79,6 +84,10 @@ int barHeight;
       if (checkSort()) {
         if (!done) {
           System.out.println("Good job! Ya did it!");
+          index = -1;
+          min = -1;
+          secondIndex = -1;
+          repaint();
           done = true;
         }
       } else {
@@ -97,17 +106,23 @@ int barHeight;
     }
   }
   private void selectSort() {
-    if (index > arr.length) {
+    if (index >= arr.length - 1) {
       index = 0;
     }
-    if (secondIndex > arr.length) {
-      secondIndex = index;
+    if (secondIndex >= arr.length - 1) {
       sPhase2 = true;
     }
     if (!sPhase2) {
-      if (arr[secondIndex] < min) {
-        min = arr[secondIndex];
+      if (arr[secondIndex] < arr[min]) {
+        min = secondIndex;
       }
+      secondIndex++;
+    } else if (sPhase2) {
+      swap(index, min);
+      min = arr.length - 1;
+      index++;
+      secondIndex = index;
+      sPhase2 = false;
     }
   }
   private void bubSort() {
