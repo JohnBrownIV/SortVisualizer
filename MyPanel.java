@@ -155,36 +155,40 @@ double barHeight;
     } else if (quickPhase == 1) {//Moving indexes
       if (arr[secondIndex] <= arr[pivot]) {//Move left index inward
         secondIndex++;
-        if (secondIndex >= pivot) {
-          secondIndex = pivot - 1;
+        if (secondIndex > pivot) {
+          secondIndex = pivot;
           System.out.println("Caught second, set to " + secondIndex + "  Left Index: " + index + ", Right Index: " + highIndex + ", Pivot: " + pivot);
         }
       }
       if (arr[thirdIndex] >= arr[pivot]) {//Move right index inward
         thirdIndex--;
-        if (thirdIndex <= pivot) {
-          thirdIndex = pivot + 1;
+        if (thirdIndex < pivot) {
+          thirdIndex = pivot;
           System.out.println("Caught third, set to " + thirdIndex + "  Left Index: " + index + ", Right Index: " + highIndex + ", Pivot: " + pivot);
         }
       }
       if (arr[secondIndex] > arr[pivot] || arr[thirdIndex] < arr[pivot]) {//At least one side requires a swap
-        if (arr[secondIndex] > arr[pivot] && arr[thirdIndex] < arr[pivot]) {//THe both do! Yay!
+        if (arr[secondIndex] > arr[pivot] && arr[thirdIndex] < arr[pivot]) {//They both do! Yay!
           swap(secondIndex, thirdIndex);
-        } else if (secondIndex == pivot - 1 || thirdIndex == pivot + 1) {//One side is out of options
-          if (arr[secondIndex] > arr[pivot]) {//Left side is the one needing the swap
-            System.out.print("Pivot: " + pivot + ", Pivot Value: " + arr[pivot]);
-            swap(secondIndex, pivot);//Move the pivot over
+        } else if (secondIndex == pivot || thirdIndex == pivot) {//One side is out of options
+          if (thirdIndex - secondIndex == 1) {//They are adjacent
+            swap(thirdIndex, secondIndex);
+          } else if (arr[secondIndex] > arr[pivot]) {//Left side is the one needing the swap
+            System.out.print("Shift by L ! Pivot: " + pivot + ", Pivot Value: " + arr[pivot]);
+            swap(pivot - 1, pivot);//Move the pivot over
             --pivot;
+            swap(secondIndex, pivot + 1);//Put the current index where it was
             System.out.println(" | New Pivot: " + pivot + ", New Pivot Value: " + arr[pivot]);
           } else {//Right side needs the swap
-            System.out.print("Pivot: " + pivot + ", Pivot Value: " + arr[pivot]);
-            swap(thirdIndex, pivot);//Move the pivot over
+            System.out.print("Shift by R ! Pivot: " + pivot + ", Pivot Value: " + arr[pivot]);
+            swap(pivot + 1, pivot);//Move the pivot over
             ++pivot;
+            swap(thirdIndex, pivot - 1);//Put the current index where it was
             System.out.println(" | New Pivot: " + pivot + ", New Pivot Value: " + arr[pivot]);
           }
         }
       } else {//Neither side needs to swap
-        if (secondIndex == pivot - 1 && thirdIndex == pivot + 1) {
+        if (secondIndex == pivot && thirdIndex == pivot) {
           quickPhase = 0;
         }
       }
