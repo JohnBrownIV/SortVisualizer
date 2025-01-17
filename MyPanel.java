@@ -70,8 +70,6 @@ double barHeight;
     g2D.setColor(Color.black);
     g2D.fillRect(50, 980, 1800, 5);
 
-    g2D.fillRect(50, 20 + (int) (arr[0] * barHeight), (int)barWidth, 1000);
-
     for (int x = 0; x < arr.length; x++) {
       if (x == index) {
         g2D.setColor(Color.orange);
@@ -82,7 +80,7 @@ double barHeight;
       } else {
         g2D.setColor(Color.black);
       }
-     g2D.fillRect(50 + (int)(x * barWidth), 20 + (int)(arr[x] * barHeight), (int)barWidth, 1000);
+     g2D.fillRect(50 + (int)(x * barWidth), 980 - (int)(arr[x] * barHeight), (int)barWidth, 1000);
     }
 
   }
