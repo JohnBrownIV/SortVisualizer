@@ -15,14 +15,19 @@ int selected;
 boolean step;
 boolean done;
 int countdown;
-
+//all (but Bogo)
 int index;
+//Insertion, Selection, Quick
 int secondIndex;
 int min;
 boolean phase2;
+//Quick only
+int pivot;
+int thirdIndex;
+int quickPhase;
 
-int barWidth;
-int barHeight;
+double barWidth;
+double barHeight;
  
   MyPanel(int arrLength, int sort) {
     arr = new int[arrLength];
@@ -45,12 +50,16 @@ int barHeight;
     phase2 = false;
     min = arr.length - 1;
 
+    pivot = arr.length / 2;
+    quickPhase = 0;
+    thirdIndex = 0;
+
     this.setPreferredSize(new Dimension(1920,1080));
     this.setBackground(Color.white);
 
     //figuring out dimensions
-    barHeight = (960 / arrLength);
-    barWidth = (1800 / arrLength);
+    barHeight = (960 / (double)arrLength);
+    barWidth = (1800 / (double)arrLength);
 
   }
 
@@ -61,7 +70,7 @@ int barHeight;
     g2D.setColor(Color.black);
     g2D.fillRect(50, 980, 1800, 5);
 
-    g2D.fillRect(50, 20 + arr[0] * barHeight, barWidth, 1000);
+    g2D.fillRect(50, 20 + (int) (arr[0] * barHeight), (int)barWidth, 1000);
 
     for (int x = 0; x < arr.length; x++) {
       if (x == index) {
@@ -73,7 +82,7 @@ int barHeight;
       } else {
         g2D.setColor(Color.black);
       }
-     g2D.fillRect(50 + x * barWidth, 20 + arr[x] * barHeight, barWidth, 1000);
+     g2D.fillRect(50 + (int)(x * barWidth), 20 + (int)(arr[x] * barHeight), (int)barWidth, 1000);
     }
 
   }
@@ -97,7 +106,9 @@ int barHeight;
           selectSort();
         } else if (sortType == 3) {
           insertSort();
-        } else if (sortType == 4) {//bogo
+        } else if (sortType == 4) {
+          quickSort();
+        } else if (sortType == 5) {//bogo
           shuffle();
         }
         //System.out.println(Arrays.toString(arr));
@@ -105,6 +116,24 @@ int barHeight;
       }
     } else {
       countdown--;
+    }
+  }
+  private void quickSort() {
+    if (quickPhase == 0) {//Assign pivot
+      pivot = ((arr.length - index) / 2) + index;//middle of unsorted
+      secondIndex = index;
+      thirdIndex = arr.length - 1;
+      quickPhase = 1;
+    } else if (quickPhase == 1) {//left half of partition
+      if (secondIndex > pivot) {//If we've hit the pivot
+        quickPhase = 0;//Sorted, assign new pivot
+      } else {
+        if (arr[secondIndex] > arr[pivot]) {//We need to make a swap
+          quickPhase = 3;
+        }
+      }
+    } else if (quickPhase == 3) {//Find a right-side swap candidate
+
     }
   }
   private void insertSort() {
