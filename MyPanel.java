@@ -141,39 +141,35 @@ double barHeight;
       System.out.println("Pinged Edge");
     }
     if (quickPhase == 0) {//Assign pivot
-      if (pivot - index > 1) {//If the pivot hasn't hit the index
-        highIndex = pivot;
+      int distance = highIndex - index;
+      if (distance < 3) {//Right Group
+        
+      } else {//Right Group
         pivot = ((highIndex - index) / 2) + index;
-      } else {
-        index = highIndex;
-        highIndex = arr.length - 1;
-        pivot = ((arr.length - index) / 2) + index;
       }
-      secondIndex = index;
-      thirdIndex = highIndex;
+      secondIndex = pivot - 1;
+      thirdIndex = pivot + 1;
       quickPhase = 1;
     } else if (quickPhase == 1) {//Moving indexes
-      if (arr[secondIndex] <= arr[pivot]) {//Move left index inward
-        secondIndex++;
-        if (secondIndex > pivot) {
-          secondIndex = pivot;
+      if (arr[secondIndex] <= arr[pivot]) {//Move left index outward
+        --secondIndex;
+        if (secondIndex < index) {
+          secondIndex = index;
           System.out.println("Caught second, set to " + secondIndex + "  Left Index: " + index + ", Right Index: " + highIndex + ", Pivot: " + pivot);
         }
       }
-      if (arr[thirdIndex] >= arr[pivot]) {//Move right index inward
-        thirdIndex--;
-        if (thirdIndex < pivot) {
-          thirdIndex = pivot;
+      if (arr[thirdIndex] >= arr[pivot]) {//Move right index outward
+        ++thirdIndex;
+        if (thirdIndex > highIndex) {
+          thirdIndex = highIndex;
           System.out.println("Caught third, set to " + thirdIndex + "  Left Index: " + index + ", Right Index: " + highIndex + ", Pivot: " + pivot);
         }
       }
       if (arr[secondIndex] > arr[pivot] || arr[thirdIndex] < arr[pivot]) {//At least one side requires a swap
         if (arr[secondIndex] > arr[pivot] && arr[thirdIndex] < arr[pivot]) {//They both do! Yay!
           swap(secondIndex, thirdIndex);
-        } else if (secondIndex == pivot || thirdIndex == pivot) {//One side is out of options
-          if (thirdIndex - secondIndex == 1) {//They are adjacent
-            swap(thirdIndex, secondIndex);
-          } else if (arr[secondIndex] > arr[pivot]) {//Left side is the one needing the swap
+        } else if (secondIndex == index || thirdIndex == highIndex) {//One side is out of options
+          if (arr[secondIndex] > arr[pivot]) {//Left side is the one needing the swap
             System.out.print("Shift by L ! Pivot: " + pivot + ", Pivot Value: " + arr[pivot]);
             swap(pivot - 1, pivot);//Move the pivot over
             --pivot;
@@ -188,7 +184,7 @@ double barHeight;
           }
         }
       } else {//Neither side needs to swap
-        if (secondIndex == pivot && thirdIndex == pivot) {
+        if (secondIndex == index && thirdIndex == highIndex) {
           quickPhase = 0;
         }
       }

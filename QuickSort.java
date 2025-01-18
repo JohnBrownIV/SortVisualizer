@@ -16,8 +16,14 @@ public class QuickSort {
     arr = quickSort(arr);
   }
   public static int[] quickSort(int[] arr) {
-    int pivot = arr.length / 2;
-    int unsortBegin = 0;
+    int pivot = arr.length - 1;
+    for (int i = pivot; i > 0; --i) {
+      if (arr[i] < arr[pivot]) {
+        swap(arr, pivot, pivot - 1);
+        --pivot;
+        swap(arr, i, pivot + 1);
+      }
+    }
     
     return arr;
   }
