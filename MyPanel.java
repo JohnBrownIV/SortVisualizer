@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -8,50 +9,33 @@ import javax.swing.*;
 public class MyPanel extends JPanel implements ActionListener {
 
 Timer timer;
-int[] arr;
+int[] trueArr;
 int sortType;
-boolean sorting;
-int selected;
-boolean step;
-boolean done;
+ArrayList<ArrayState> arrayStates;
 int countdown;
-//all (but Bogo)
-int index;
-//Insertion, Selection, Quick
-int secondIndex;
-int min;
-boolean phase2;
-//Quick only
-int pivot;
-int highIndex;
-int quickPhase;
+boolean ranSort;
 
 double barWidth;
 double barHeight;
  
   MyPanel(int arrLength, int sort) {
-    arr = new int[arrLength];
+
+    trueArr = new int[arrLength];
     for (int i = 0; i < arrLength; i++) {
-      arr[i] = i;
+      trueArr[i] = i;
     }
     mixUp();
-    System.out.println("Starting Array: " + Arrays.toString(arr));
+    System.out.println("Starting Array: " + Arrays.toString(trueArr));
 
-    timer = new Timer(100, this);
+    timer = new Timer(15, this);
 	  timer.start();
-    countdown = 50;
+    countdown = 200;
 
     sortType = sort;
-    sorting = false;
-    done = false;
+    ranSort = false;
 
-    index = 0;
-    secondIndex = 0;
-    phase2 = false;
-    min = arr.length - 1;
-
-    quickPhase = 0;
-    highIndex = arr.length - 1;
+    arrayStates = new ArrayList<ArrayState>();
+    arrayStates.add(new ArrayState(trueArr));
 
     this.setPreferredSize(new Dimension(1920,1080));
     this.setBackground(Color.white);
@@ -67,182 +51,152 @@ double barHeight;
     g2D.clearRect(0, 0, 1920, 1080);
 
     g2D.setColor(Color.black);
-    g2D.fillRect(50, 980, 1800, 5);
+    //g2D.fillRect(50, 980, 1800, 5);
 
-    for (int x = 0; x < arr.length; x++) {
-      if (x == index && sortType != 4) {
-        g2D.setColor(Color.orange);
-      } else if ((sortType == 2 || sortType == 3) && x == secondIndex) {
-        g2D.setColor(Color.green);
-      } else if (sortType == 2  && x == min) {
-        g2D.setColor(Color.red);
-      } else if (sortType == 4) {//Quicksort
-        if (x == pivot) {
-          g2D.setColor(Color.red);
-        } else if (x == index) {
-          g2D.setColor(Color.green);
-        } else if (x == secondIndex) {
-          g2D.setColor(Color.blue);
-        } else if (x == highIndex) {
-          g2D.setColor(Color.magenta);
-        } else {
+    ArrayState inArr = arrayStates.get(0);
+    for (int x = 0; x < inArr.arr.length; x++) {
+      switch(sortType) {
+        case 2:
+          if (x == inArr.index2) {
+            g2D.setColor(Color.blue);
+            break;
+          }
+        case 1:
+          if (x == inArr.index) {
+            g2D.setColor(Color.green);
+            break;
+          }
+        default:
           g2D.setColor(Color.black);
-        }
-      } else {
-        g2D.setColor(Color.black);
       }
-     g2D.fillRect(50 + (int)(x * barWidth), 980 - (int)(arr[x] * barHeight), (int)barWidth, 1000);
+      g2D.fillRect(50 + (int)(x * barWidth), 980 - (int)(inArr.arr[x] * barHeight), (int)barWidth, 1000);
     }
-    if (sortType == 4) {
-      g2D.setColor(Color.gray);
-      g2D.fillRect(0, 980 - (int)(arr[pivot] * barHeight), 1920, 5);
+    if (arrayStates.size() > 1) {
+      arrayStates.remove(0);
     }
   }
   //NEW FRAME
   @Override
 	public void actionPerformed(ActionEvent e) {
-    if (countdown == 0) {
-      if (checkSort()) {
-        if (!done) {
-          System.out.println("Good job! Ya did it!");
-          index = -1;
-          min = -1;
-          secondIndex = -1;
-          repaint();
-          done = true;
+    if (ranSort != true) {
+      if (countdown == 0) {
+        switch (sortType) {
+          case 1:
+          trueArr = bubbleSort(trueArr);
+          System.out.println("ran bs");
+          break;
+          case 2:
+          trueArr = insertionSort(trueArr);
+          System.out.println("ran is");
+          break;
         }
+        ranSort = true;
       } else {
-        if (sortType == 1) {//Bubble
-          bubSort();
-        } else if (sortType == 2) {
-          selectSort();
-        } else if (sortType == 3) {
-          insertSort();
-        } else if (sortType == 4) {
-          quickSort();
-        } else if (sortType == 5) {//bogo
-          shuffle();
-        }
-        //System.out.println(Arrays.toString(arr));
-        repaint();
+        countdown--;
       }
-    } else {
-      countdown--;
+    }
+    if (arrayStates.size() > 1) {
+      repaint();
     }
   }
   private void quickSort() {
-    if (quickPhase == 0) {
-      pivot = highIndex;
-      if (pivot <= index) {
-        index = highIndex;
-        highIndex = highIndex * 2;
-        if (highIndex > arr.length) {
-          highIndex = arr.length;
+    
+  }
+  private int[] insertionSort(int[] arr) {
+    for (int i = 0; i < arr.length; i++) {
+      //finding the correct spot on the sub array
+      int slot = 0;
+      for (int y = 0; y < i; ++y) {
+        arrayStates.add(new ArrayState(arr, i, y));//adding it before we do everything else
+        if (arr[y] > arr[i]) {
+          slot = y;
+          break;
         }
       }
-      secondIndex = pivot;
-      quickPhase = 1;
-    } else if (quickPhase == 1) {
-      secondIndex--;
-      System.out.println("Second index: " + secondIndex);
-      if (secondIndex == index) {
-        quickPhase = 0;
-        highIndex = ((highIndex + index) / 2) + index;
-      } else if (arr[secondIndex] > arr[pivot]) {//Should be on other side of pivot
-        System.out.println("Element: " + secondIndex + " requires swap");
-        swap(pivot, pivot - 1);
-        --pivot;
-        swap(secondIndex, pivot + 1);
-        System.out.println("Pivot: " + pivot);
+      //shifting slot and on into the index
+      int temp = arr[i];
+      for (int y = slot; y < i; ++y) {
+        arr[y] = arr[y + 1];
       }
+      arr[slot] = temp;
     }
-  }
-  private void insertSort() {
-    if (index == 0) {
-      index = 1;
-    }
-    if (!phase2) {
-      if (arr[secondIndex] < arr[index]) {
-        secondIndex++;
-      } else {
-        insertShift();
-        phase2 = true;
-      }
-    } else {
-      index++;
-      secondIndex = 0;
-      phase2 = false;
-    }
-  }
-  private void insertShift() {
-    int temp = arr[index];
-    for (int i = index; i > secondIndex; --i) {
-      arr[i] = arr[i - 1];
-    }
-    arr[secondIndex] = temp;
+    return arr;
   }
   private void selectSort() {
-    if (index >= arr.length - 1) {
-      index = 0;
-    }
-    if (secondIndex >= arr.length - 1) {
-      phase2 = true;
-    }
-    if (!phase2) {
-      if (arr[secondIndex] < arr[min]) {
-        min = secondIndex;
+    
+  }
+  private int[] bubbleSort(int[] arr) {
+    int length = arr.length;
+    int temp;
+    boolean changed = true;
+    int timesRan = 0;
+    while (changed) {
+      changed = false;
+      for (int i = 1; i < length - timesRan; i++) {
+        if (arr[i] < arr[i - 1]) {
+          temp = arr[i - 1];
+          arr[i - 1] = arr[i];
+          arr[i] = temp;
+          changed = true;
+          /*for (int x = 0; x < arr.length; x++) {
+          System.out.print(arr[x] + " ");
+          }
+          System.out.println();*/ //This prints it as it goes 'cause it looks cool
+        }
+        arrayStates.add(new ArrayState(arr, i));
       }
-      secondIndex++;
-    } else if (phase2) {
-      swap(index, min);
-      min = arr.length - 1;
-      index++;
-      secondIndex = index;
-      phase2 = false;
+      ++timesRan;
     }
+    return arr;
   }
-  private void bubSort() {
-    if (index >= arr.length - 1) {
-      index = 0;
-    }
-    if (arr[index] > arr[index + 1]) {
-      swap(index, index + 1);
-    }
-    index++;
-  }
-  private boolean checkSort() {
-    boolean sorted = true;
-    for (int i = 1; i < arr.length; i++) {
-      if (arr[i] < arr[i - 1]) {
-        sorted = false;
-        break;
-      }
-    }
-    return sorted;
-  }
+
   private void mixUp() {
     shuffle();
     //Reverse
-    for (int i = 0; i < arr.length / 2; i++) {
-      swap(i, (arr.length - 1) - i);
+    for (int i = 0; i < trueArr.length / 2; i++) {
+      swap(i, (trueArr.length - 1) - i);
     }
     shuffle();
     //Reverse
-    for (int i = 0; i < arr.length / 2; i++) {
-      swap(i, (arr.length - 1) - i);
+    for (int i = 0; i < trueArr.length / 2; i++) {
+      swap(i, (trueArr.length - 1) - i);
     }
     shuffle();
   }
   public void shuffle() {
     Random random = new Random();
-    int count = arr.length;
+    int count = trueArr.length;
     for (int i = count; i > 1; i--) {
         swap(i - 1, random.nextInt(i));
     }
   }
   private void swap(int i, int j) {
-      int temp = arr[i];
-      arr[i] = arr[j];
-      arr[j] = temp;
+      int temp = trueArr[i];
+      trueArr[i] = trueArr[j];
+      trueArr[j] = temp;
+  }
+}
+class ArrayState {
+  int[] arr;
+  int index = -1;
+  int index2 = -1;
+  int index3 = -1;
+  ArrayState(int[] inArr) {
+    arr = Arrays.copyOf(inArr, inArr.length - 1);
+  }
+  ArrayState(int[] inArr, int inIndex) {
+    arr = Arrays.copyOf(inArr, inArr.length - 1);
+    index = inIndex;
+  }
+  ArrayState(int[] inArr, int inIndex, int inIndex2) {
+    arr = Arrays.copyOf(inArr, inArr.length - 1);
+    index = inIndex;
+    index2 = inIndex2;
+  }
+  ArrayState(int[] inArr, int inIndex, int inIndex2, int inIndex3) {
+    arr = Arrays.copyOf(inArr, inArr.length - 1);
+    index = inIndex;
+    index2 = inIndex2;
+    index3 = inIndex3;
   }
 }
