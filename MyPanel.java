@@ -145,29 +145,15 @@ double barHeight;
     
   }
   private int[] quickSort(int[] arr) {
-    return quickSort(new int[] {5,4,3,2,1}, 0, 5);
+    return quickSort(arr, 0, arr.length - 1);
   }
   private int[] quickSort(int[] arr, int lowBound, int upBound) {
-    System.out.println("iterarted");
     int length = upBound - lowBound;
     if (length <= 1) {
       return arr;
     }
-    //Partition
-    int pivot = upBound - 1;
-    for (int i = lowBound; i < pivot; ++i) {//cycle through array up to pivot
-      System.out.print(Arrays.toString(arr));
-      System.out.println(" " + pivot + ", val: " + arr[pivot]);
-      arrayStates.add(new ArrayState(arr, pivot, lowBound, upBound, i));
-      if (arr[i] > arr[pivot]) {
-        arr = swap(arr, pivot, pivot - 1);
-        arr = swap(arr, pivot, i);
-        --pivot;//shift the pivot to match it's old position
-      }
-    }
-    //Split the array and recurse
-    arr = quickSort(arr, lowBound, pivot);
-    arr = quickSort(arr, pivot, upBound);
+    int pivot = upBound - 1;//pivot is the leftmost element
+    for (int i )
     return arr;
   }
   private int[] mergeSort(int[] arr) {
