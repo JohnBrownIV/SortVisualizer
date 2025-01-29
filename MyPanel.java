@@ -69,12 +69,19 @@ double barHeight;
       case 5:
         g2D.drawString("Bogo Sort", 10, 55);
         break;
+      case 6:
+        g2D.drawString("Quick Sort", 10, 55);
+        break;
     }
 
     ArrayState inArr = arrayStates.get(0);
     for (int x = 0; x < inArr.arr.length; ++x) {
       g2D.setColor(Color.black);
       switch(sortType) {
+        case 6:
+          if (x == inArr.index4) {
+            g2D.setColor(Color.orange);
+          }
         case 4:
         case 3:
           if (x == inArr.index3) {
@@ -123,6 +130,10 @@ double barHeight;
             trueArr = bogoSort(trueArr);
             System.out.println("ran bs");
             break;
+          case 6://Quick
+            trueArr = quickSort(trueArr);
+            System.out.println("ran qs");
+            break;
         }
         ranSort = true;
         arrayStates.add(new ArrayState(trueArr));
@@ -133,8 +144,31 @@ double barHeight;
     repaint();
     
   }
-  private void quickSort() {
-    
+  private int[] quickSort(int[] arr) {
+    return quickSort(new int[] {5,4,3,2,1}, 0, 5);
+  }
+  private int[] quickSort(int[] arr, int lowBound, int upBound) {
+    System.out.println("iterarted");
+    int length = upBound - lowBound;
+    if (length <= 1) {
+      return arr;
+    }
+    //Partition
+    int pivot = upBound - 1;
+    for (int i = lowBound; i < pivot; ++i) {//cycle through array up to pivot
+      System.out.print(Arrays.toString(arr));
+      System.out.println(" " + pivot + ", val: " + arr[pivot]);
+      arrayStates.add(new ArrayState(arr, pivot, lowBound, upBound, i));
+      if (arr[i] > arr[pivot]) {
+        arr = swap(arr, pivot, pivot - 1);
+        arr = swap(arr, pivot, i);
+        --pivot;//shift the pivot to match it's old position
+      }
+    }
+    //Split the array and recurse
+    arr = quickSort(arr, lowBound, pivot);
+    arr = quickSort(arr, pivot, upBound);
+    return arr;
   }
   private int[] mergeSort(int[] arr) {
     return mergeSort(arr, 0, arr.length);
@@ -293,6 +327,7 @@ class ArrayState {
   int index = -1;
   int index2 = -1;
   int index3 = -1;
+  int index4 = -1;
   ArrayState(int[] inArr) {
     arr = Arrays.copyOf(inArr, inArr.length);
   }
@@ -310,5 +345,12 @@ class ArrayState {
     index = inIndex;
     index2 = inIndex2;
     index3 = inIndex3;
+  }
+  ArrayState(int[] inArr, int inIndex, int inIndex2, int inIndex3, int inIndex4) {
+    arr = Arrays.copyOf(inArr, inArr.length);
+    index = inIndex;
+    index2 = inIndex2;
+    index3 = inIndex3;
+    index4 = inIndex4;
   }
 }
