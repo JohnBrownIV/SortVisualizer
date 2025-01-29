@@ -112,6 +112,39 @@ double barHeight;
   private void quickSort() {
     
   }
+  private int[] mergeSort(int[] arr) {
+    mergeSort(arr, 0, arr.length - 1);
+    return arr;
+  }
+  private int[] mergeSort(int[] arr, int lowBound, int upBound) {
+    int length = upBound - lowBound;
+    if (length <= 1) {
+      return arr;
+    }
+    //splitting
+    //Create merge sorted sublists
+    int split = (length / 2) + lowBound;
+    mergeSort(arr, lowBound, split);
+    mergeSort(arr, split, upBound);
+    //Merge those sublists
+    int sub1index = lowBound;
+    int sub2index = split;
+    int[] fuseArr = new int[length];
+    for (int i = 0; i < length; ++i) {//loop through the bounds of the array
+      //figure out how the hell we're merging
+      if (sub1index == split) {//sub1 is at its end;
+        fuseArr[i] = arr[sub2index];
+        ++sub2index;
+        continue;
+      }
+      if (sub2index == upBound) {//sub2 is at its end
+        fuseArr[i] = arr[sub1index];
+        ++sub1index;
+        continue;
+      }
+    }
+    return arr;
+  }
   private int[] insertionSort(int[] arr) {
     //looping through the array
     for (int index = 1; index < arr.length; ++index) {
