@@ -49,9 +49,27 @@ double barHeight;
   public void paint(Graphics g) {
     Graphics2D g2D = (Graphics2D) g;
     g2D.clearRect(0, 0, 1920, 1080);
-    g2D.setFont(new Font("Times New Roman", 1, 25));
+    g2D.setFont(new Font("Times New Roman", 1, 50));
     g2D.setColor(Color.black);
     //g2D.fillRect(50, 980, 1800, 5);
+    //Draw name
+    switch (sortType) {
+      case 1:
+        g2D.drawString("Bubble Sort", 10, 55);
+        break;
+      case 2:
+        g2D.drawString("Insertion Sort", 10, 55);
+        break;
+      case 3:
+        g2D.drawString("Selection Sort", 10, 55);
+        break;
+      case 4:
+        g2D.drawString("Merge Sort", 10, 55);
+        break;
+      case 5:
+        g2D.drawString("Bogo Sort", 10, 55);
+        break;
+    }
 
     ArrayState inArr = arrayStates.get(0);
     for (int x = 0; x < inArr.arr.length; ++x) {
