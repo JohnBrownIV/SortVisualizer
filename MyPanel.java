@@ -24,7 +24,7 @@ double barHeight;
     for (int i = 0; i < arrLength; i++) {
       trueArr[i] = i;
     }
-    mixUp();
+    trueArr = mixUp(trueArr);
     System.out.println("Starting Array: " + Arrays.toString(trueArr));
 
     timer = new Timer(15, this);
@@ -49,12 +49,12 @@ double barHeight;
   public void paint(Graphics g) {
     Graphics2D g2D = (Graphics2D) g;
     g2D.clearRect(0, 0, 1920, 1080);
-
+    g2D.setFont(new Font("Times New Roman", 1, 25));
     g2D.setColor(Color.black);
     //g2D.fillRect(50, 980, 1800, 5);
 
     ArrayState inArr = arrayStates.get(0);
-    for (int x = 0; x < inArr.arr.length; x++) {
+    for (int x = 0; x < inArr.arr.length; ++x) {
       switch(sortType) {
         case 2:
           if (x == inArr.index2) {
@@ -63,13 +63,14 @@ double barHeight;
           }
         case 1:
           if (x == inArr.index) {
-            g2D.setColor(Color.green);
+            g2D.setColor(Color.red);
             break;
           }
         default:
           g2D.setColor(Color.black);
       }
       g2D.fillRect(50 + (int)(x * barWidth), 980 - (int)(inArr.arr[x] * barHeight), (int)barWidth, 1000);
+      //g2D.drawString("" + inArr.arr[x], 50 + (int)(x * barWidth), 980 - (int)(inArr.arr[x] * barHeight));//show values
     }
     if (arrayStates.size() > 1) {
       arrayStates.remove(0);
@@ -89,41 +90,57 @@ double barHeight;
           trueArr = insertionSort(trueArr);
           System.out.println("ran is");
           break;
+          case 5://Bogo
+          trueArr = bogoSort(trueArr);
+          System.out.println("ran bs");
+          break;
         }
         ranSort = true;
+        arrayStates.add(new ArrayState(trueArr));
       } else {
         countdown--;
       }
     }
-    if (arrayStates.size() > 1) {
-      repaint();
-    }
+    repaint();
+    
   }
   private void quickSort() {
     
   }
   private int[] insertionSort(int[] arr) {
-    for (int i = 0; i < arr.length; i++) {
-      //finding the correct spot on the sub array
-      int slot = 0;
-      for (int y = 0; y < i; ++y) {
-        arrayStates.add(new ArrayState(arr, i, y));//adding it before we do everything else
-        if (arr[y] > arr[i]) {
-          slot = y;
+    //looping through the array
+    for (int index = 1; index < arr.length; ++index) {
+      //finding the position in our sorting array where we want to put our index
+      int pos = index;//the position we'll switch our index with
+      for (int y = 0; y <= index; ++y) {
+        arrayStates.add(new ArrayState(arr, index, y));
+        if (arr[y] > arr[index]) {
+          pos = y;
           break;
         }
       }
-      //shifting slot and on into the index
-      int temp = arr[i];
-      for (int y = slot; y < i; ++y) {
-        arr[y] = arr[y + 1];
+      //Now we need to shift the (sorted)array over to make space for the new index position
+      int temp = arr[index];
+      for (int y = index; y > pos; --y) {
+        arr[y] = arr[y - 1];
       }
-      arr[slot] = temp;
+      arr[pos] = temp;
+      arrayStates.add(new ArrayState(arr, index, pos));
     }
     return arr;
   }
   private void selectSort() {
     
+  }
+  private int[] bogoSort(int[] arr) {
+    for (int i = 0; i < arr.length * arr.length; ++i) {
+      arr = mixUp(arr);
+      arrayStates.add(new ArrayState(arr));
+      if (isSorted(arr)) {
+        return arr;
+      }
+    }
+    return arr;
   }
   private int[] bubbleSort(int[] arr) {
     int length = arr.length;
@@ -150,30 +167,41 @@ double barHeight;
     return arr;
   }
 
-  private void mixUp() {
-    shuffle();
+  private int[] mixUp(int[] arr) {
+    arr = shuffle(arr);
     //Reverse
-    for (int i = 0; i < trueArr.length / 2; i++) {
-      swap(i, (trueArr.length - 1) - i);
+    for (int i = 0; i < arr.length / 2; i++) {
+      arr = swap(arr, i, (arr.length - 1) - i);
     }
-    shuffle();
+    arr = shuffle(arr);
     //Reverse
-    for (int i = 0; i < trueArr.length / 2; i++) {
-      swap(i, (trueArr.length - 1) - i);
+    for (int i = 0; i < arr.length / 2; i++) {
+      arr = swap(arr, i, (arr.length - 1) - i);
     }
-    shuffle();
+    arr = shuffle(arr);
+    return arr;
   }
-  public void shuffle() {
+  public int[] shuffle(int[] arr) {
     Random random = new Random();
     int count = trueArr.length;
     for (int i = count; i > 1; i--) {
-        swap(i - 1, random.nextInt(i));
+      arr = swap(arr, i - 1, random.nextInt(i));
     }
+    return arr;
   }
-  private void swap(int i, int j) {
-      int temp = trueArr[i];
-      trueArr[i] = trueArr[j];
-      trueArr[j] = temp;
+  private int[] swap(int[] arr, int i, int j) {
+      int temp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = temp;
+      return arr;
+  }
+  private boolean isSorted(int[] arr) {
+    for (int i = 0; i < arr.length - 1; ++i) {
+      if (arr[i] > arr[i + 1]) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 class ArrayState {
@@ -182,19 +210,19 @@ class ArrayState {
   int index2 = -1;
   int index3 = -1;
   ArrayState(int[] inArr) {
-    arr = Arrays.copyOf(inArr, inArr.length - 1);
+    arr = Arrays.copyOf(inArr, inArr.length);
   }
   ArrayState(int[] inArr, int inIndex) {
-    arr = Arrays.copyOf(inArr, inArr.length - 1);
+    arr = Arrays.copyOf(inArr, inArr.length);
     index = inIndex;
   }
   ArrayState(int[] inArr, int inIndex, int inIndex2) {
-    arr = Arrays.copyOf(inArr, inArr.length - 1);
+    arr = Arrays.copyOf(inArr, inArr.length);
     index = inIndex;
     index2 = inIndex2;
   }
   ArrayState(int[] inArr, int inIndex, int inIndex2, int inIndex3) {
-    arr = Arrays.copyOf(inArr, inArr.length - 1);
+    arr = Arrays.copyOf(inArr, inArr.length);
     index = inIndex;
     index2 = inIndex2;
     index3 = inIndex3;
