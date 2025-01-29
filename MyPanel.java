@@ -57,6 +57,7 @@ double barHeight;
     for (int x = 0; x < inArr.arr.length; ++x) {
       g2D.setColor(Color.black);
       switch(sortType) {
+        case 4:
         case 3:
           if (x == inArr.index3) {
             g2D.setColor(Color.green);
@@ -95,6 +96,11 @@ double barHeight;
             trueArr = selectSort(trueArr);
             System.out.println("ran ss");
             break;
+          case 4://Merge
+            trueArr = mergeSort(trueArr);
+            System.out.println("ran ms");
+            System.out.println(Arrays.toString(trueArr));
+            break;
           case 5://Bogo
             trueArr = bogoSort(trueArr);
             System.out.println("ran bs");
@@ -113,10 +119,10 @@ double barHeight;
     
   }
   private int[] mergeSort(int[] arr) {
-    mergeSort(arr, 0, arr.length - 1);
-    return arr;
+    return mergeSort(arr, 0, arr.length);
   }
   private int[] mergeSort(int[] arr, int lowBound, int upBound) {
+    arrayStates.add(new ArrayState(arr,-1, lowBound, upBound));
     int length = upBound - lowBound;
     if (length <= 1) {
       return arr;
@@ -131,6 +137,7 @@ double barHeight;
     int sub2index = split;
     int[] fuseArr = new int[length];
     for (int i = 0; i < length; ++i) {//loop through the bounds of the array
+      arrayStates.add(new ArrayState(arr,i + lowBound, lowBound, upBound));
       //figure out how the hell we're merging
       if (sub1index == split) {//sub1 is at its end;
         fuseArr[i] = arr[sub2index];
@@ -142,6 +149,17 @@ double barHeight;
         ++sub1index;
         continue;
       }
+      if (arr[sub1index] < arr[sub2index]) {
+        fuseArr[i] = arr[sub1index];
+        ++sub1index;
+      } else {
+        fuseArr[i] = arr[sub2index];
+        ++sub2index;
+      }
+    }
+    //Now add the fused array onto the original array
+    for (int i = lowBound; i < upBound; ++i) {
+      arr[i] = fuseArr[i - lowBound];
     }
     return arr;
   }
