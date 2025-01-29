@@ -55,19 +55,20 @@ double barHeight;
 
     ArrayState inArr = arrayStates.get(0);
     for (int x = 0; x < inArr.arr.length; ++x) {
+      g2D.setColor(Color.black);
       switch(sortType) {
+        case 3:
+          if (x == inArr.index3) {
+            g2D.setColor(Color.green);
+          }
         case 2:
           if (x == inArr.index2) {
             g2D.setColor(Color.blue);
-            break;
           }
         case 1:
           if (x == inArr.index) {
             g2D.setColor(Color.red);
-            break;
           }
-        default:
-          g2D.setColor(Color.black);
       }
       g2D.fillRect(50 + (int)(x * barWidth), 980 - (int)(inArr.arr[x] * barHeight), (int)barWidth, 1000);
       //g2D.drawString("" + inArr.arr[x], 50 + (int)(x * barWidth), 980 - (int)(inArr.arr[x] * barHeight));//show values
@@ -82,18 +83,22 @@ double barHeight;
     if (ranSort != true) {
       if (countdown == 0) {
         switch (sortType) {
-          case 1:
-          trueArr = bubbleSort(trueArr);
-          System.out.println("ran bs");
-          break;
-          case 2:
-          trueArr = insertionSort(trueArr);
-          System.out.println("ran is");
-          break;
+          case 1://bubble
+            trueArr = bubbleSort(trueArr);
+            System.out.println("ran bs");
+            break;
+          case 2://insert
+            trueArr = insertionSort(trueArr);
+            System.out.println("ran is");
+            break;
+          case 3://select
+            trueArr = selectSort(trueArr);
+            System.out.println("ran ss");
+            break;
           case 5://Bogo
-          trueArr = bogoSort(trueArr);
-          System.out.println("ran bs");
-          break;
+            trueArr = bogoSort(trueArr);
+            System.out.println("ran bs");
+            break;
         }
         ranSort = true;
         arrayStates.add(new ArrayState(trueArr));
@@ -129,8 +134,18 @@ double barHeight;
     }
     return arr;
   }
-  private void selectSort() {
-    
+  private int[] selectSort(int[] arr) {
+    for (int i = 0; i < arr.length; ++i) {//loop through the array
+      int min = i;
+      for (int y = i; y < arr.length; ++y) {//loop through the rest of the array to locate the minimum
+        arrayStates.add(new ArrayState(arr, i, y, min));
+        if (arr[y] < arr[min]) {
+          min = y;
+        }
+      }
+      arr = swap(arr,min,i);//swap them
+    }
+    return arr;
   }
   private int[] bogoSort(int[] arr) {
     for (int i = 0; i < arr.length * arr.length; ++i) {
