@@ -75,6 +75,7 @@ double barHeight;
     for (int x = 0; x < inArr.arr.length; ++x) {
       g2D.setColor(Color.white);
       switch(sortType) {
+        case 7:
         case 6:
           if (x == inArr.index4) {
             g2D.setColor(Color.orange);
@@ -88,7 +89,6 @@ double barHeight;
           if (x == inArr.index2) {
             g2D.setColor(Color.blue);
           }
-        case 7:
         case 1:
           if (x == inArr.index) {
             g2D.setColor(Color.red);
@@ -149,7 +149,7 @@ double barHeight;
       if (countdown == 0) {
         ranSort = false;
         nextSort = false;
-        sortType = rand(1, 7);
+        sortType = rand(1, 8);
         switch (sortType) {
           case 1:
             makeArr(75);
@@ -323,14 +323,13 @@ double barHeight;
     return arr;
   }
   private int[] shakerSort(int[] arr) {
-    int length = arr.length;
     boolean left = false;
     int lowBound = 0;
     int upBound = arr.length - 1;
-    while (upBound != lowBound) {
+    while (upBound != lowBound && isSorted(arr) == false) {
       if (left) {
         for (int i = upBound; i > lowBound; --i) {
-          arrayStates.add(new ArrayState(arr, i));
+          arrayStates.add(new ArrayState(arr, i, upBound, lowBound));
           if (arr[i] < arr[i - 1]) {//swap i with right element
             arr = swap(arr, i, i - 1);
           }
@@ -339,7 +338,7 @@ double barHeight;
         left = false;
       } else {//going right
         for (int i = lowBound; i < upBound; ++i) {
-          arrayStates.add(new ArrayState(arr, i));
+          arrayStates.add(new ArrayState(arr, i, upBound, lowBound));
           if (arr[i] > arr[i + 1]) {//swap i with right element
             arr = swap(arr, i, i + 1);
           }
