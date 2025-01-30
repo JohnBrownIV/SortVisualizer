@@ -38,7 +38,7 @@ double barHeight;
     arrayStates.add(new ArrayState(trueArr));
 
     this.setPreferredSize(new Dimension(1920,1080));
-    this.setBackground(Color.white);
+    this.setBackground(Color.black);
 
     //figuring out dimensions
     barHeight = (960 / (double)arrLength);
@@ -48,9 +48,10 @@ double barHeight;
 
   public void paint(Graphics g) {
     Graphics2D g2D = (Graphics2D) g;
-    g2D.clearRect(0, 0, 1920, 1080);
-    g2D.setFont(new Font("Times New Roman", 1, 50));
     g2D.setColor(Color.black);
+    g2D.fillRect(0, 0, 1920, 1080);
+    g2D.setFont(new Font("Times New Roman", 1, 50));
+    g2D.setColor(Color.white);
     //g2D.fillRect(50, 980, 1800, 5);
     //Draw name
     switch (sortType) {
@@ -76,7 +77,7 @@ double barHeight;
 
     ArrayState inArr = arrayStates.get(0);
     for (int x = 0; x < inArr.arr.length; ++x) {
-      g2D.setColor(Color.black);
+      g2D.setColor(Color.white);
       switch(sortType) {
         case 6:
           if (x == inArr.index4) {
@@ -97,6 +98,8 @@ double barHeight;
           }
       }
       g2D.fillRect(50 + (int)(x * barWidth), 980 - (int)(inArr.arr[x] * barHeight), (int)barWidth, 1000);
+      g2D.setColor(Color.black);
+      g2D.drawRect(50 + (int)(x * barWidth), 980 - (int)(inArr.arr[x] * barHeight), (int)barWidth, 1000);
       //g2D.drawString("" + inArr.arr[x], 50 + (int)(x * barWidth), 980 - (int)(inArr.arr[x] * barHeight));//show values
     }
     if (arrayStates.size() > 1) {
@@ -145,15 +148,27 @@ double barHeight;
     
   }
   private int[] quickSort(int[] arr) {
-    return quickSort(arr, 0, arr.length - 1);
+    return quickSort(arr, 0, arr.length);
   }
   private int[] quickSort(int[] arr, int lowBound, int upBound) {
     int length = upBound - lowBound;
     if (length <= 1) {
       return arr;
     }
+    //Partition the array
     int pivot = upBound - 1;//pivot is the leftmost element
-    for (int i )
+    for (int i = pivot; i >= lowBound; --i) {
+      arrayStates.add(new ArrayState(arr, pivot, lowBound, upBound, i));
+      if (arr[i] > arr[pivot]) {//Should be on the right of the pivot
+        arr = swap(arr, pivot - 1, i);
+        arr = swap(arr, pivot, pivot - 1);
+        --pivot;
+        continue;
+      }
+    }
+    //Run quicksort on the lower portions of the array
+    arr = quickSort(arr, lowBound, pivot);
+    arr = quickSort(arr, pivot, upBound);
     return arr;
   }
   private int[] mergeSort(int[] arr) {
