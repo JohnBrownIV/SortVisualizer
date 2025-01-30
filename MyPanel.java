@@ -73,8 +73,12 @@ double barHeight;
       case 6:
         g2D.drawString("Quick Sort", 10, 55);
         break;
+      case 7:
+        g2D.drawString("Shaker Sort", 10, 55);
+        break; 
     }
-
+    //Draw number of items
+    g2D.drawString("Items: " + trueArr.length, 10, 105);
     ArrayState inArr = arrayStates.get(0);
     for (int x = 0; x < inArr.arr.length; ++x) {
       g2D.setColor(Color.white);
@@ -92,6 +96,7 @@ double barHeight;
           if (x == inArr.index2) {
             g2D.setColor(Color.blue);
           }
+        case 7:
         case 1:
           if (x == inArr.index) {
             g2D.setColor(Color.red);
@@ -136,6 +141,10 @@ double barHeight;
           case 6://Quick
             trueArr = quickSort(trueArr);
             System.out.println("ran qs");
+            break;
+          case 7://Shaker
+            trueArr = shakerSort(trueArr);
+            System.out.println("ran ShakeS");
             break;
         }
         ranSort = true;
@@ -282,6 +291,34 @@ double barHeight;
         arrayStates.add(new ArrayState(arr, i));
       }
       ++timesRan;
+    }
+    return arr;
+  }
+  private int[] shakerSort(int[] arr) {
+    int length = arr.length;
+    boolean left = false;
+    int lowBound = 0;
+    int upBound = arr.length - 1;
+    while (upBound != lowBound) {
+      if (left) {
+        for (int i = upBound; i > lowBound; --i) {
+          arrayStates.add(new ArrayState(arr, i));
+          if (arr[i] < arr[i - 1]) {//swap i with right element
+            arr = swap(arr, i, i - 1);
+          }
+        }
+        ++lowBound;
+        left = false;
+      } else {//going right
+        for (int i = lowBound; i < upBound; ++i) {
+          arrayStates.add(new ArrayState(arr, i));
+          if (arr[i] > arr[i + 1]) {//swap i with right element
+            arr = swap(arr, i, i + 1);
+          }
+        }
+        --upBound;
+        left = true;
+      }
     }
     return arr;
   }
