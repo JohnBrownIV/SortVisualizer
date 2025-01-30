@@ -14,18 +14,15 @@ int sortType;
 ArrayList<ArrayState> arrayStates;
 int countdown;
 boolean ranSort;
+boolean nextSort;
 
 double barWidth;
 double barHeight;
  
   MyPanel(int arrLength, int sort) {
 
-    trueArr = new int[arrLength];
-    for (int i = 0; i < arrLength; i++) {
-      trueArr[i] = i;
-    }
-    trueArr = mixUp(trueArr);
-    System.out.println("Starting Array: " + Arrays.toString(trueArr));
+    arrayStates = new ArrayList<ArrayState>();
+    makeArr(arrLength);
 
     timer = new Timer(15, this);
 	  timer.start();
@@ -33,16 +30,11 @@ double barHeight;
 
     sortType = sort;
     ranSort = false;
-
-    arrayStates = new ArrayList<ArrayState>();
-    arrayStates.add(new ArrayState(trueArr));
+    nextSort = false;
 
     this.setPreferredSize(new Dimension(1920,1080));
     this.setBackground(Color.black);
 
-    //figuring out dimensions
-    barHeight = (960 / (double)arrLength);
-    barWidth = (1800 / (double)arrLength);
 
   }
 
@@ -149,11 +141,47 @@ double barHeight;
         }
         ranSort = true;
         arrayStates.add(new ArrayState(trueArr));
+        countdown = 200;
       } else {
         countdown--;
       }
+    } else if (nextSort) {
+      if (countdown == 0) {
+        ranSort = false;
+        nextSort = false;
+        sortType = rand(1, 7);
+        switch (sortType) {
+          case 1:
+            makeArr(75);
+            break;
+          case 2:
+            makeArr(150);
+            break;
+          case 3:
+            makeArr(150);
+            break;
+          case 4:
+            makeArr(500);
+            break;
+          case 5:
+            makeArr(20);
+            break;
+          case 6:
+            makeArr(500);
+            break;
+          case 7:
+            makeArr(100);
+            break;
+        }
+      } else {
+        --countdown;
+        System.out.println("Nextsort countdown down");
+      }
     }
     repaint();
+    if (arrayStates.size() <= 1 && countdown == 200) {
+      nextSort = true;
+    }
     
   }
   private int[] quickSort(int[] arr) {
@@ -358,6 +386,24 @@ double barHeight;
       }
     }
     return true;
+  }
+  public int rand(int min, int max) {
+    Random rand = new Random();
+    return rand.nextInt(max - min) + min;
+  }
+  private void makeArr(int size) {
+    trueArr = new int[size];
+    for (int i = 0; i < size; i++) {
+      trueArr[i] = i;
+    }
+    trueArr = mixUp(trueArr);
+    System.out.println("Starting Array: " + Arrays.toString(trueArr));
+    arrayStates.clear();
+    arrayStates.add(new ArrayState(trueArr));
+
+    //find bounds
+    barHeight = (960 / (double)size);
+    barWidth = (1800 / (double)size);
   }
 }
 class ArrayState {
